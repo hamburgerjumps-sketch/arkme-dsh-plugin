@@ -4,12 +4,15 @@ export interface ArkmeUiState {
   open: boolean
   surfaceOpen: boolean
   authRevision: number
+  sourceRevision: number
   mode: 'login' | 'source'
   selectedSource?: ArkmeSourceItem
 }
 
 export class ArkmeUiController {
-  private state: ArkmeUiState = { open: false, surfaceOpen: false, authRevision: 0, mode: 'login' }
+  private state: ArkmeUiState = {
+    open: false, surfaceOpen: false, authRevision: 0, sourceRevision: 0, mode: 'login',
+  }
   private readonly listeners = new Set<() => void>()
 
   readonly getSnapshot = (): ArkmeUiState => this.state
@@ -65,9 +68,14 @@ export class ArkmeUiController {
     this.publish({ ...this.state, open: true, mode: 'source', selectedSource: source })
   }
 
+  sourceChanged(): void {
+    this.publish({ ...this.state, sourceRevision: this.state.sourceRevision + 1 })
+  }
+
   private publish(next: ArkmeUiState): void {
     if (next.open === this.state.open && next.surfaceOpen === this.state.surfaceOpen
       && next.authRevision === this.state.authRevision
+      && next.sourceRevision === this.state.sourceRevision
       && next.mode === this.state.mode && next.selectedSource?.sourceRef === this.state.selectedSource?.sourceRef) return
     this.state = next
     for (const listener of this.listeners) listener()

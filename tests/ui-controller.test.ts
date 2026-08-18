@@ -17,19 +17,25 @@ describe('ArkmeUiController', () => {
     controller.selectSource(source)
     expect(controller.getSnapshot()).toMatchObject({ mode: 'source', selectedSource: source })
     controller.focusSendToSelf()
-    expect(controller.getSnapshot()).toEqual({ open: true, surfaceOpen: true, authRevision: 0, mode: 'source' })
+    expect(controller.getSnapshot()).toEqual({
+      open: true, surfaceOpen: true, authRevision: 0, sourceRevision: 0, mode: 'source',
+    })
     controller.deactivateSurface()
     expect(controller.getSnapshot()).toMatchObject({ open: true, surfaceOpen: false })
     controller.activateSurface()
     expect(controller.getSnapshot()).toMatchObject({ open: true, surfaceOpen: true })
     controller.showLogin()
-    expect(controller.getSnapshot()).toEqual({ open: true, surfaceOpen: true, authRevision: 0, mode: 'login' })
+    expect(controller.getSnapshot()).toEqual({
+      open: true, surfaceOpen: true, authRevision: 0, sourceRevision: 0, mode: 'login',
+    })
     controller.showLoginSurface()
     expect(controller.getSnapshot()).toMatchObject({ open: false, surfaceOpen: true, mode: 'login' })
     controller.authChanged(true)
     expect(controller.getSnapshot()).toMatchObject({ open: true, surfaceOpen: true })
     expect(controller.getSnapshot().authRevision).toBe(1)
-    expect(listener).toHaveBeenCalledTimes(7)
+    controller.sourceChanged()
+    expect(controller.getSnapshot().sourceRevision).toBe(1)
+    expect(listener).toHaveBeenCalledTimes(8)
     unsubscribe()
   })
 })

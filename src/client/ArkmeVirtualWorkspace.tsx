@@ -299,7 +299,7 @@ export function ArkmeNavigation({ wide = true, onClose, onActivateSurface }: Ark
   useEffect(() => {
     if (authenticated) void loadDirectory(directory)
     else setSources([])
-  }, [authenticated, directory, loadDirectory])
+  }, [authenticated, directory, loadDirectory, ui.sourceRevision])
   useEffect(() => {
     if (!authenticated || directory !== 'send_to_self') return
     const defaultCategory = sources.find(source => source.kind === 'default_category')

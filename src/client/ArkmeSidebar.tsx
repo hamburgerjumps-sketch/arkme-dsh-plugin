@@ -302,6 +302,7 @@ export function ArkmeSurface({ floating = false, initialAuth }: ArkmeSurfaceProp
         ? { ...item, itemUid: result.itemUid, status: result.status, ...(result.sequence === undefined ? {} : { sequence: result.sequence }) }
         : item))
       if (result.localState === 'failed') setError(result.error ?? '内容已保存在本地，远端同步失败')
+      else arkmeUi.sourceChanged()
     } catch (caught) {
       setItems(current => current.filter(item => item.itemUid !== recordUid)); setDraft(textContent); setError(errorMessage(caught))
     } finally { setBusy(false) }
