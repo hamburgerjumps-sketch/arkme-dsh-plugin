@@ -355,6 +355,9 @@ describe('ArkmeService', () => {
         summary: { record_count: 2, latest_send_at: 99 },
         latest_record_core: { record_uid: 'record-latest', text_content: '最近内容', send_at: 99 },
       }] } })
+      if (url.endsWith('/api/v1/records/uncategorized/summary')) {
+        return json({ code: 0, data: { record_count: 7, words_count: 20, total_sec: 0 } })
+      }
       if (url.endsWith('/api/v1/topics/display/detail')) return json({ code: 0, data: {
         records: [{ record_uid: 'record-1', creator_user_id: 10001, nickname: '我', text_content: '主题内容', send_at: 80, status: 1 }],
         has_more: true, next_cursor_send_at: 79, next_cursor_record_uid: 'record-next',
@@ -364,8 +367,8 @@ describe('ArkmeService', () => {
     })
 
     const sources = await service.listSources('send_to_self', { limit: 20 })
-    expect(sources.items.map(item => [item.kind, item.displayName])).toEqual([
-      ['default_category', '默认分类'], ['topic', '工作'],
+    expect(sources.items.map(item => [item.kind, item.displayName, item.recordCount])).toEqual([
+      ['default_category', '默认分类', 7], ['topic', '工作', 2],
     ])
     expect(sources.items[1]?.sourceRef).not.toContain('topic-1')
     const topicRef = sources.items[1]!.sourceRef
@@ -388,10 +391,11 @@ describe('ArkmeService', () => {
     const fetchImpl = vi.fn<typeof fetch>(async () => json({ code: 0, data: { items: [] } }))
     const service = new ArkmeService(config, sessions, state, fetchImpl)
     const source = (await service.listSources('send_to_self')).items[0]!
+    const callsBeforeAccountSwitch = fetchImpl.mock.calls.length
     sessions.session = { userId: 10002, accessToken: 'other-access', refreshToken: 'other-refresh' }
 
     await expect(service.readSource(source.sourceRef)).rejects.toMatchObject({ code: 'source-ref-invalid' })
-    expect(fetchImpl).toHaveBeenCalledOnce()
+    expect(fetchImpl).toHaveBeenCalledTimes(callsBeforeAccountSwitch)
   })
 
   it('lists, reads, and sends private/group chat sources through the Chat owner', async () => {

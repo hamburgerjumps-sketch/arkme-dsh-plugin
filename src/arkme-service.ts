@@ -419,12 +419,14 @@ export class ArkmeService {
         { limit: Math.min(100, Math.max(1, limit)) },
         session,
       )
+      const defaultSummary = await this.summary()
       const defaultCategory: ArkmeSourceItem = {
         sourceRef: await this.sealSourceRef(session.userId, 'default_category', 'uncategorized', '默认分类'),
         kind: 'default_category',
         displayName: '默认分类',
         activeAtMillis: 0,
         unreadCount: 0,
+        recordCount: defaultSummary.recordCount,
       }
       const topics: ArkmeSourceItem[] = []
       for (const raw of listValue(data.items)) {
