@@ -36,6 +36,7 @@ import { groupMemberToolModules } from './groups/index.js'
 import { contactToolModules } from './contacts/index.js'
 import { groupToolModules } from './groups/index.js'
 import { voiceprintToolModules } from './voiceprint/index.js'
+import { topicToolModules } from './topics/index.js'
 
 /** Stable model-facing order retained from the pre-catalog registration path. */
 export const businessToolModules: readonly ArkmeToolModule[] = [
@@ -48,6 +49,7 @@ export const businessToolModules: readonly ArkmeToolModule[] = [
   ...recordCalendarToolModules,
   listImagesToolModule,
   createRecordToolModule,
+  ...topicToolModules,
   ...botToolModules,
   worldRecentToolModule,
   worldMineToolModule,

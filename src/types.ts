@@ -863,6 +863,8 @@ export interface ArkmeProviderCapabilities {
     sourceDirectory: true
     sourceTimeline: true
     sourceTextSend: true
+    /** Stable per-item root and direct-child topic batch creation is available. */
+    topicBatchCreate?: true
     richContentRead: boolean
     richContentSend: boolean
     fileUpload: boolean
@@ -1039,6 +1041,31 @@ export interface ArkmeTopicCreateResult {
   source: ArkmeSourceItem
   /** Present only when the requested parent relation and the automatic orphan cleanup both failed. */
   warning?: string
+}
+
+export type ArkmeTopicBatchItemDisposition =
+  | 'accepted'
+  | 'idempotent'
+  | 'failed_before_create'
+  | 'failed_cleaned'
+  | 'outcome_unknown'
+
+export interface ArkmeTopicBatchCreateItemResult {
+  title: string
+  disposition: ArkmeTopicBatchItemDisposition
+  succeeded: boolean
+  /** Present only when the owner confirmed a usable active topic. */
+  source?: ArkmeSourceItem
+  errorCode?: string
+  errorMessage?: string
+}
+
+export interface ArkmeTopicBatchCreateResult {
+  /** Present only for a direct-child batch. */
+  parentSourceRef?: string
+  items: ArkmeTopicBatchCreateItemResult[]
+  succeededCount: number
+  failedCount: number
 }
 
 export interface ArkmeTimelineCursor {
@@ -2093,6 +2120,7 @@ export type ArkmePluginOperation =
   | 'contacts.add'
   | 'chat.private.open-from-contact'
   | 'group.create'
+  | 'topic.batch-create'
   | 'bots.create'
   | 'records.summary'
   | 'records.cache'

@@ -182,6 +182,7 @@ import type {
   ArkmeSourceSendResult,
   ArkmeTimelineCursor,
   ArkmeTimelinePage,
+  ArkmeTopicBatchCreateResult,
   ArkmeTopicCreateResult,
   ArkmeUploadedAsset,
   ArkmeUnmarkedSpeakerInferenceRetry,
@@ -489,6 +490,7 @@ export class ArkmeService {
         sourceDirectory: true,
         sourceTimeline: true,
         sourceTextSend: true,
+        topicBatchCreate: true,
         richContentRead: this.config.richMediaRenderEnabled !== false,
         richContentSend: this.config.richMediaSendEnabled !== false,
         fileUpload: this.config.richMediaSendEnabled !== false,
@@ -781,11 +783,12 @@ export class ArkmeService {
   async setArkmeIdOnce(name: string): Promise<ArkmeIdMutationResult> {
     return await this.profile.setArkmeIdOnce(name)
   }
-
   async createTopic(titleInput: string, parentSourceRef?: string): Promise<ArkmeTopicCreateResult> {
     return await this.source.createTopic(titleInput, parentSourceRef)
   }
-
+  async createTopicsBatch(titles: readonly string[], clientMutationId: string, parentSourceRef?: string, signal?: AbortSignal): Promise<ArkmeTopicBatchCreateResult> {
+    return await this.source.createTopicsBatch(titles, clientMutationId, parentSourceRef, signal)
+  }
   async listSources(
     directory: ArkmeSourceDirectory,
     options: { limit?: number; cursor?: string; signal?: AbortSignal; refresh?: boolean } = {},
